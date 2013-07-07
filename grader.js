@@ -28,6 +28,7 @@ var rest = require('restler');
 
 var HTMLFILE_DEFAULT = "index.html";
 var CHECKSFILE_DEFAULT = "checks.json";
+var URL_DEFAULT = "http://aqueous-dusk-9538.herokuapp.com/";
 
 var response2console = function(result, response) {
        if (result instanceof Error) {
@@ -40,10 +41,6 @@ var responseprocess = function(result, response) {
        if (result instanceof Error) {
             console.error('Error: ' + util.format(response.message));
         } else {
-            	//console.log("reponse is");
-		//console.log(response);
-		//console.log("result is");
-		//console.log(result);
 	return result;
         }
 };
@@ -106,14 +103,17 @@ if(require.main == module) {
     program
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
-        .parse(process.argv);
+        .option('-u, --url <url_html>', 'url', URL_DEFAULT)
+	.parse(process.argv);
      
  	htmlstreamer = 'empty';
 
-	rest.get("http://aqueous-dusk-9538.herokuapp.com/").on('complete',function(result) {
-	
+	//rest.get("http://aqueous-dusk-9538.herokuapp.com/").on('complete',function(result) {
+	rest.get(program.url).on('complete',function(result) {
+
+
 		if (result instanceof Error) {
-    			sys.puts('Error: ' + result.message);
+    			console.log('Error: ' + result.message);
   		} else {
     		 	var checkJson = checkHtmlStream(result,program.checks);
 			var outJson = JSON.stringify(checkJson, null, 4);
@@ -124,3 +124,4 @@ if(require.main == module) {
 } else {
     exports.checkHtmlFile = checkHtmlFile;
 }
+ 
